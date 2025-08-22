@@ -5,7 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Pixel Plaza - Habbo Hotel",
+  title: "Pixel Plaza",
   description: "",
   generator: "",
 }
