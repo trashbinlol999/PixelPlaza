@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Slider } from "@/components/ui/slider"
-import { MessageSquare, Map, Settings, Volume2, VolumeX, Music2, Pause, WifiOff } from "lucide-react"
+import { MessageSquare, Map, Settings, Volume2, VolumeX, Music2, Pause, WifiOff, ExternalLink } from "lucide-react"
 import IsoRoom, { type RoomPreset } from "@/components/iso-room"
 import ChatPanel from "@/components/chat-panel"
 import WindowFrame from "@/components/window-frame"
@@ -258,6 +258,7 @@ export default function Page() {
   const handleRoomChange = useCallback((next: RoomPreset) => setRoom(next), [])
 
   const onlineCount = useMemo(() => (others ? others.length + 1 : 1), [others])
+
   const roomTitle = useMemo(() => `${room} — Online: ${onlineCount}`, [room, onlineCount])
 
   // Use the last 10 messages for in-room bubbles (per author)
@@ -278,6 +279,13 @@ export default function Page() {
             </Button>
             <Button variant="outline" className={styles.pixelButton} onClick={() => setChatOpen((v) => !v)}>
               <MessageSquare className="w-4 h-4" /> Chat
+            </Button>
+            <Button
+              variant="outline"
+              className={styles.pixelButton}
+              onClick={() => window.open("https://x.com/pixelplazafun", "_blank")}
+            >
+              <ExternalLink className="w-4 h-4" /> Twitter
             </Button>
             <Button variant="outline" className={styles.pixelButton} onClick={() => setSettingsOpen((v) => !v)}>
               <Settings className="w-4 h-4" /> Settings
@@ -319,7 +327,7 @@ export default function Page() {
                 </div>
               )}
               <div className="absolute bottom-2 left-2 text-[12px] text-black font-medium bg-white/90 px-2 py-1 rounded border border-black/20 shadow-sm">
-                CA: sfhshs
+                CA: AAAAA
               </div>
             </div>
           </div>
