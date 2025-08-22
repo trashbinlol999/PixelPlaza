@@ -318,6 +318,9 @@ export default function Page() {
                   <span>Offline mode (no Supabase env)</span>
                 </div>
               )}
+              <div className="absolute bottom-2 left-2 text-[12px] text-black font-medium bg-white/90 px-2 py-1 rounded border border-black/20 shadow-sm">
+                CA:
+              </div>
             </div>
           </div>
         </div>
