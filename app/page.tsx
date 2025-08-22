@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Slider } from "@/components/ui/slider"
-import { MessageSquare, Map, Settings, Volume2, VolumeX, Music2, Pause, WifiOff } from 'lucide-react'
+import { MessageSquare, Map, Settings, Volume2, VolumeX, Music2, Pause, WifiOff } from "lucide-react"
 import IsoRoom, { type RoomPreset } from "@/components/iso-room"
 import ChatPanel from "@/components/chat-panel"
 import WindowFrame from "@/components/window-frame"
@@ -51,7 +51,10 @@ const TRACK_CANDIDATES: Record<TrackId, { label: string; sources: TrackCandidate
   night: {
     label: "Night (Wikimedia/Archive)",
     sources: [
-      { src: "https://upload.wikimedia.org/wikipedia/commons/3/3f/OOjs_UI_icon_notice-progressive.ogg", type: "audio/ogg" },
+      {
+        src: "https://upload.wikimedia.org/wikipedia/commons/3/3f/OOjs_UI_icon_notice-progressive.ogg",
+        type: "audio/ogg",
+      },
       { src: "https://archive.org/download/SampleAudio_201303/sample_128kbps.mp3", type: "audio/mpeg" },
       { src: "https://ia802707.us.archive.org/30/items/Example-mp3-file/Example.mp3", type: "audio/mpeg" },
     ],
@@ -131,43 +134,48 @@ export default function Page() {
   }, [])
 
   // Try a list of candidate sources for a track. If all fail, use synth fallback.
-  const playTrack = useCallback(async (id: TrackId) => {
-    if (!audioEnabled) {
-      setCurrentTrackId(id)
-      setIsPlaying(false)
-      return
-    }
-
-    const a = audioRef.current
-    const t = TRACK_CANDIDATES[id]
-    if (!a || !t) return
-    if (usingFallbackRef.current) stopFallback()
-
-    const canPlayOgg = !!a.canPlayType && a.canPlayType("audio/ogg; codecs=vorbis") !== ""
-    const canPlayMp3 = !!a.canPlayType && a.canPlayType("audio/mpeg") !== ""
-    const candidates = t.sources.filter(s => {
-      if (s.type === "audio/ogg") return canPlayOgg
-      if (s.type === "audio/mpeg") return canPlayMp3
-      return true
-    })
-
-    for (const c of candidates) {
-      try {
-        const proxied = `/api/proxy-audio?url=${encodeURIComponent(c.src)}`
-        a.pause()
-        a.src = proxied
-        try { a.load?.() } catch {}
-        a.currentTime = 0
-        await a.play()
+  const playTrack = useCallback(
+    async (id: TrackId) => {
+      if (!audioEnabled) {
         setCurrentTrackId(id)
-        setIsPlaying(true)
+        setIsPlaying(false)
         return
-      } catch {
-        continue
       }
-    }
-    await startFallback(id)
-  }, [audioEnabled, startFallback, stopFallback])
+
+      const a = audioRef.current
+      const t = TRACK_CANDIDATES[id]
+      if (!a || !t) return
+      if (usingFallbackRef.current) stopFallback()
+
+      const canPlayOgg = !!a.canPlayType && a.canPlayType("audio/ogg; codecs=vorbis") !== ""
+      const canPlayMp3 = !!a.canPlayType && a.canPlayType("audio/mpeg") !== ""
+      const candidates = t.sources.filter((s) => {
+        if (s.type === "audio/ogg") return canPlayOgg
+        if (s.type === "audio/mpeg") return canPlayMp3
+        return true
+      })
+
+      for (const c of candidates) {
+        try {
+          const proxied = `/api/proxy-audio?url=${encodeURIComponent(c.src)}`
+          a.pause()
+          a.src = proxied
+          try {
+            a.load?.()
+          } catch {}
+          a.currentTime = 0
+          await a.play()
+          setCurrentTrackId(id)
+          setIsPlaying(true)
+          return
+        } catch {
+          continue
+        }
+      }
+      await startFallback(id)
+    },
+    [audioEnabled, startFallback, stopFallback],
+  )
 
   const pauseAudio = useCallback(() => {
     if (usingFallbackRef.current) {
@@ -178,14 +186,17 @@ export default function Page() {
     setIsPlaying(false)
   }, [stopFallback])
 
-  const toggleMusicBox = useCallback((id: string) => {
-    const trackId: TrackId = id === "night" ? "night" : "sunny"
-    if (currentTrackId === trackId && isPlaying) {
-      pauseAudio()
-    } else {
-      void playTrack(trackId)
-    }
-  }, [currentTrackId, isPlaying, pauseAudio, playTrack])
+  const toggleMusicBox = useCallback(
+    (id: string) => {
+      const trackId: TrackId = id === "night" ? "night" : "sunny"
+      if (currentTrackId === trackId && isPlaying) {
+        pauseAudio()
+      } else {
+        void playTrack(trackId)
+      }
+    },
+    [currentTrackId, isPlaying, pauseAudio, playTrack],
+  )
 
   const {
     messages,
@@ -241,7 +252,7 @@ export default function Page() {
       }
       await sendMessage(text)
     },
-    [sendMessage, selfDance, setDance, party, setPartySync, selfSit, setSit, triggerWave, triggerLaugh]
+    [sendMessage, selfDance, setDance, party, setPartySync, selfSit, setSit, triggerWave, triggerLaugh],
   )
 
   const handleRoomChange = useCallback((next: RoomPreset) => setRoom(next), [])
@@ -364,7 +375,8 @@ export default function Page() {
               ))}
             </div>
             <div className="mt-auto border-t border-black/20 text-[11px] text-black/70 px-3 py-2">
-              Tip: Click tiles or hold WASD/Arrows to walk. Emotes: /dance, /sit, /party, /wave, /laugh. Click a music box to play tunes locally.
+              Tip: Click tiles or hold WASD/Arrows to walk. Emotes: /dance, /sit, /party, /wave, /laugh. Click a music
+              box to play tunes locally.
             </div>
           </div>
         </WindowFrame>
@@ -406,7 +418,11 @@ export default function Page() {
               <div className="mt-1 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[13px]">
                   <Music2 className="w-4 h-4" />
-                  <span>{currentTrackId ? `${TRACK_CANDIDATES[currentTrackId].label}${usingFallbackRef.current ? " (Synth)" : ""}` : "None"}</span>
+                  <span>
+                    {currentTrackId
+                      ? `${TRACK_CANDIDATES[currentTrackId].label}${usingFallbackRef.current ? " (Synth)" : ""}`
+                      : "None"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -418,7 +434,15 @@ export default function Page() {
                       else void playTrack(currentTrackId)
                     }}
                   >
-                    {isPlaying ? <><Pause className="w-4 h-4" /> Pause</> : <><Music2 className="w-4 h-4" /> Play</>}
+                    {isPlaying ? (
+                      <>
+                        <Pause className="w-4 h-4" /> Pause
+                      </>
+                    ) : (
+                      <>
+                        <Music2 className="w-4 h-4" /> Play
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
